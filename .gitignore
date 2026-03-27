@@ -1,3 +1,6 @@
 # Data volumes
 mysql-data/
 grafana-data/
+
+# Claude Code
+CLAUDE.md
