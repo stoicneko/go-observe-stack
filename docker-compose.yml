@@ -19,7 +19,7 @@ services:
       - "3306:3306" 
 
   golang:
-    build: .
+
     container_name: my-go-app
     ports: 
       - "5000:5000"
