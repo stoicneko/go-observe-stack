@@ -18,3 +18,9 @@ prometheus:
   replicas: 1
   port: 9090
   imagePullPolicy: Never
+
+grafana:
+  image: grafana/grafana
+  replicas: 1
+  port: 3000
+  imagePullPolicy: Never
