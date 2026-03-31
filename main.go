@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -11,8 +12,16 @@ import (
 var db *sql.DB
 
 func main() {
+	dbUser := os.Getenv("DB_USER") // 预期值: root
+	dbPass := os.Getenv("DB_PASS") // 预期值: 123456
+	dbHost := os.Getenv("DB_HOST") // 预期值: db
+	dbPort := os.Getenv("DB_PORT") // 预期值: 3306
+	dbName := os.Getenv("DB_NAME") // 预期值: myapp
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
+
 	var err error
-	db, err = sql.Open("mysql", "root:123456@tcp(db:3306)/myapp")
+	db, err = sql.Open("mysql", dsn)
 	if err != nil {
 		panic(err)
 	}
