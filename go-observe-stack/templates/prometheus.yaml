@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-deployment
+  labels:
+    app: prometheus
+spec:
+  replicas: {{ .Values.prometheus.replicas }}
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: {{ .Values.prometheus.image }}
+        imagePullPolicy: {{ .Values.prometheus.imagePullPolicy }}
+        ports:
+        - containerPort: {{ .Values.prometheus.port }}
+        volumeMounts:
+        - name: prometheus
+          mountPath: "/etc/prometheus/prometheus.yml"
+          subPath: prometheus.yml
+          readOnly: true
+      volumes:
+        - name: prometheus
+          configMap:
+            name: prometheus
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+spec:
+  selector: 
+    app: prometheus
+  ports:
+    - protocol: TCP
+      port: {{ .Values.prometheus.port }}
+      targetPort: {{ .Values.prometheus.port }}
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+
+
+
