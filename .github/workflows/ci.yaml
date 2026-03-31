@@ -5,7 +5,7 @@ on:
     branches: [master]
 
 permissions:
-  package: write
+  packages: write
 
 jobs:
   build:
