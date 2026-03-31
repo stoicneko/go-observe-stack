@@ -14,6 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Run tests
+        uses: go test ./...
+
       - name: Build Docker image
         run: docker build -t go-backend .
 
