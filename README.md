@@ -1,6 +1,6 @@
 # go-observe-stack
 
-A Docker Compose project: Go HTTP backend behind Nginx, with MySQL storage and a full observability stack.
+A learning project for Go backend development, containerization, Kubernetes orchestration, and full-stack observability.
 
 [中文文档](README_CN.md)
 
@@ -58,6 +58,59 @@ docker compose up -d --build golang
 - **Metrics**: Prometheus scrapes cAdvisor for container metrics. View at `http://localhost:9090`.
 - **Logs**: Promtail collects Docker container logs and ships them to Loki. Query via Grafana.
 - **Dashboards**: Grafana at `http://localhost:3000` (default login: admin / admin). Add Prometheus and Loki as data sources.
+
+## Kubernetes Deployment
+
+### Vanilla Manifests
+
+```bash
+kubectl apply -f k8s/
+```
+
+Includes Deployment + Service for backend, MySQL, and Nginx, plus a ConfigMap for DB connection config. DB password is referenced via a Secret (`backend-secret`) that needs to be created manually.
+
+### Helm Chart
+
+```bash
+helm install go-observe-stack ./go-observe-stack
+```
+
+The Helm chart (`go-observe-stack/`) packages backend, MySQL, Nginx, Prometheus, and Grafana. Configurable values are in `values.yaml` (image, replicas, port, etc.).
+
+## CI/CD
+
+GitHub Actions pipeline (`.github/workflows/ci.yaml`) runs on every push to `master`:
+
+1. **Test** — `go test ./...`
+2. **Build** — Docker image build
+3. **Push** — Publish `go-backend:latest` to GitHub Container Registry (`ghcr.io`)
+
+## Testing
+
+```bash
+go test ./...
+```
+
+Unit tests cover the root handler and input validation for the messages endpoint using `httptest`.
+
+## Project Progress
+
+| Milestone                          | Status |
+|------------------------------------|--------|
+| Go HTTP backend + MySQL            | Done   |
+| Nginx reverse proxy                | Done   |
+| Docker Compose orchestration       | Done   |
+| Observability (Prometheus, Grafana, Loki, Promtail, cAdvisor) | Done |
+| GitHub Actions CI/CD               | Done   |
+| Unit tests + CI integration        | Done   |
+| Vanilla Kubernetes manifests       | Done   |
+| Externalize DB config (ConfigMap/Secret) | Done |
+| Helm chart (backend, Prometheus, Grafana) | Done |
+| Helm chart — full parameterization (db, nginx) | TODO |
+| Integration tests (Testcontainers) | TODO   |
+| Multi-stage Dockerfile             | TODO   |
+| K8s health probes & resource limits | TODO  |
+| Ingress / domain routing           | TODO   |
 
 ## License
 
